@@ -176,12 +176,16 @@ def test_clear_prototype_cache_does_not_break_classify(clf):
 def test_namespaced_stores_are_isolated(tmp_path):
     shared_db = str(tmp_path / "shared.db")
     clf_a = Classifier(
-        categories=CATEGORIES, encoder=_deterministic_encoder,
-        store_path=shared_db, namespace="ns_a",
+        categories=CATEGORIES,
+        encoder=_deterministic_encoder,
+        store_path=shared_db,
+        namespace="ns_a",
     )
     clf_b = Classifier(
-        categories=CATEGORIES, encoder=_deterministic_encoder,
-        store_path=shared_db, namespace="ns_b",
+        categories=CATEGORIES,
+        encoder=_deterministic_encoder,
+        store_path=shared_db,
+        namespace="ns_b",
     )
     clf_a.record("doc-X", label="DEFENSE")
     # clf_b should not see clf_a's record

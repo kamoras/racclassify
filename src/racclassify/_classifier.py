@@ -22,8 +22,10 @@ from __future__ import annotations
 import logging
 import threading
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 from ._embeddings import EncoderFn, embed_batch, embed_one
 
@@ -40,6 +42,7 @@ DEFAULT_KNN_CONFIDENCE = 0.45
 @dataclass
 class ClassificationResult:
     """Single-label classification result."""
+
     label: str
     confidence: float
 
@@ -127,24 +130,22 @@ class Classifier:
         if self._default not in self._categories:
             raise ValueError(f"default_label {self._default!r} not in categories")
 
-        self._proto_cache: np.ndarray | None = None
+        self._proto_cache: npt.NDArray[Any] | None = None
         self._proto_lock = threading.Lock()
 
         self._store = None
         if store_path:
             from ._store import LearningStore
+
             self._store = LearningStore(store_path, namespace=namespace)
 
         self._corpus = None
         if corpus_path:
             try:
                 from ._corpus import ReferenceCorpus
-                self._corpus = ReferenceCorpus(
-                    persist_path=corpus_path, namespace=namespace
-                )
-                logger.info(
-                    "Reference corpus loaded (%d examples)", self._corpus.size()
-                )
+
+                self._corpus = ReferenceCorpus(persist_path=corpus_path, namespace=namespace)
+                logger.info("Reference corpus loaded (%d examples)", self._corpus.size())
             except ImportError:
                 logger.warning(
                     "corpus_path given but chromadb is not installed. "
@@ -304,7 +305,7 @@ class Classifier:
 
     # ── Internals ────────────────────────────────────────────────────────
 
-    def _prototype_embeddings(self) -> np.ndarray:
+    def _prototype_embeddings(self) -> npt.NDArray[Any]:
         """Compute and cache the prototype embeddings for all categories."""
         with self._proto_lock:
             if self._proto_cache is None:
@@ -314,5 +315,5 @@ class Classifier:
                 )
             return self._proto_cache
 
-    def _embed_one(self, text: str) -> np.ndarray:
+    def _embed_one(self, text: str) -> npt.NDArray[Any]:
         return embed_one(text, model_name=self._model, encoder=self._encoder)

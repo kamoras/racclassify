@@ -16,12 +16,9 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
-from typing import TYPE_CHECKING
+from typing import Any
 
-import numpy as np
-
-if TYPE_CHECKING:
-    pass
+import numpy.typing as npt
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +70,7 @@ class ReferenceCorpus:
             metadata={"hnsw:space": "cosine"},
         )
 
-    def classify(self, embedding: np.ndarray) -> tuple[str | None, float]:
+    def classify(self, embedding: npt.NDArray[Any]) -> tuple[str | None, float]:
         """Return (label, confidence) from kNN vote, or (None, 0.0) if corpus is thin."""
         result = self._col.query(  # type: ignore[attr-defined]
             query_embeddings=[embedding.tolist()],
@@ -99,7 +96,7 @@ class ReferenceCorpus:
         confidence = best_weight / sum(votes.values())
         return best, confidence
 
-    def add(self, doc_id: str, embedding: np.ndarray, label: str) -> None:
+    def add(self, doc_id: str, embedding: npt.NDArray[Any], label: str) -> None:
         """Add a classified document to the corpus."""
         self._col.upsert(  # type: ignore[attr-defined]
             ids=[doc_id],
@@ -115,7 +112,7 @@ class ReferenceCorpus:
             pass
 
     def size(self) -> int:
-        return self._col.count()  # type: ignore[attr-defined]
+        return self._col.count()  # type: ignore[attr-defined, no-any-return]
 
     def label_distribution(self) -> dict[str, int]:
         result = self._col.get(include=["metadatas"])  # type: ignore[attr-defined]

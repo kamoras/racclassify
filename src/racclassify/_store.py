@@ -43,7 +43,7 @@ class LearningStore:
         if not hasattr(self._local, "conn"):
             self._local.conn = sqlite3.connect(str(self._path), check_same_thread=False)
             self._local.conn.row_factory = sqlite3.Row
-        return self._local.conn
+        return self._local.conn  # type: ignore[no-any-return]
 
     def _init_db(self) -> None:
         conn = self._conn()
@@ -53,10 +53,14 @@ class LearningStore:
 
     def lookup(self, doc_id: str) -> tuple[str, float] | None:
         """Return (label, confidence) for a previously classified doc, or None."""
-        row = self._conn().execute(
-            "SELECT label, confidence FROM classifications WHERE doc_id=? AND namespace=?",
-            (doc_id, self._ns),
-        ).fetchone()
+        row = (
+            self._conn()
+            .execute(
+                "SELECT label, confidence FROM classifications WHERE doc_id=? AND namespace=?",
+                (doc_id, self._ns),
+            )
+            .fetchone()
+        )
         return (row["label"], row["confidence"]) if row else None
 
     def record(
@@ -94,11 +98,15 @@ class LearningStore:
 
     def stats(self) -> dict[str, object]:
         """Return distribution of stored labels for monitoring."""
-        rows = self._conn().execute(
-            "SELECT label, COUNT(*) as n FROM classifications"
-            " WHERE namespace=? GROUP BY label ORDER BY n DESC",
-            (self._ns,),
-        ).fetchall()
+        rows = (
+            self._conn()
+            .execute(
+                "SELECT label, COUNT(*) as n FROM classifications"
+                " WHERE namespace=? GROUP BY label ORDER BY n DESC",
+                (self._ns,),
+            )
+            .fetchall()
+        )
         total = sum(r["n"] for r in rows)
         return {
             "total": total,
