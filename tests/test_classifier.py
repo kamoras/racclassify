@@ -6,12 +6,11 @@ classification accuracy.  Accuracy testing against real text requires a
 real embedding model and is left to integration tests.
 """
 
-import numpy as np
 import pytest
 
-from racclassify import Classifier, ClassificationResult
-from .conftest import CATEGORIES, _deterministic_encoder
+from racclassify import ClassificationResult, Classifier
 
+from .conftest import CATEGORIES, _deterministic_encoder
 
 # ── Construction ─────────────────────────────────────────────────────────
 

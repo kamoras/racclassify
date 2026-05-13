@@ -21,7 +21,7 @@ Basic usage::
     clf.record("ticket-42", label="BILLING", text="My payment was charged twice")
 """
 
-from ._classifier import Classifier, ClassificationResult
+from ._classifier import ClassificationResult, Classifier
 
 __all__ = ["Classifier", "ClassificationResult"]
 __version__ = "0.1.0"

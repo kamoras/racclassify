@@ -67,7 +67,6 @@ class ReferenceCorpus:
         return chromadb.EphemeralClient()
 
     def _get_or_create_collection(self) -> object:
-        import chromadb  # already checked in _make_client
 
         return self._client.get_or_create_collection(  # type: ignore[attr-defined]
             name=self._collection_name,

@@ -13,7 +13,6 @@ import pytest
 
 from racclassify import Classifier
 
-
 CATEGORIES = {
     "HEALTHCARE": "Medical insurance, hospitals, Medicare, prescription drugs, public health.",
     "DEFENSE": "Military, armed forces, national security, weapons, veterans.",

@@ -71,7 +71,8 @@ class LearningStore:
         prefix = (text or "")[:200]
         self._conn().execute(
             """
-            INSERT INTO classifications (doc_id, namespace, label, confidence, text_prefix, recorded_at)
+            INSERT INTO classifications
+                (doc_id, namespace, label, confidence, text_prefix, recorded_at)
             VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(doc_id, namespace) DO UPDATE SET
                 label=excluded.label,
@@ -94,7 +95,8 @@ class LearningStore:
     def stats(self) -> dict[str, object]:
         """Return distribution of stored labels for monitoring."""
         rows = self._conn().execute(
-            "SELECT label, COUNT(*) as n FROM classifications WHERE namespace=? GROUP BY label ORDER BY n DESC",
+            "SELECT label, COUNT(*) as n FROM classifications"
+            " WHERE namespace=? GROUP BY label ORDER BY n DESC",
             (self._ns,),
         ).fetchall()
         total = sum(r["n"] for r in rows)
